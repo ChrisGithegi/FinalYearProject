@@ -47,7 +47,6 @@ def allData():
 		except:
 			pass
 allData()
-
 '''
 now get data with the fields needed.
 fields needed are: 'UniqueId','Date','Time','site','TYPE','Generic Model','Propulsion Type Desc','BodyTypeDesc2','Mass','Co2'
@@ -58,9 +57,28 @@ def getTrueData():
 	df = pd.read_csv('../ProcessedData/ProcessedData.csv',skipinitialspace=True,usecols=fields)
 	#replace empty value's with NaN (exception of TYPE field as if not populated, is a private vehicle)
 	df['Mass'].replace('',np.nan, inplace = True)
-	df['Mass'].replace(0,np.nan, inplace = True)
+	df['Mass'].replace(0.0,np.nan, inplace = True)
 	df['TYPE'].replace(np.nan,'Private Vehicle',inplace=True)
-	df['Generic Model'].replace('',np.nan, inplace = True)
+	#replace unknown/missing vehicle titles in the name so that we only have proper car names
+	for d in df['Generic Model']:
+		f = str(d)
+		try:
+			if 'Model Missing' in f or 'Unknown' in f or f == '':
+				df['Generic Model'].replace(d,np.nan, inplace = True)
+			else:
+				pass
+		except Exception as e:
+			pass
+	for d in df['Mass']:
+		try:
+			f = int(d)
+			if f < 800:
+				df['Mass'].replace(d,np.nan, inplace = True)
+			else:
+				pass
+		except Exception as e:
+				pass
+
 	df['BodyTypeDesc2'].replace('',np.nan, inplace = True)
 	df['Co2'].replace('',np.nan, inplace = True)
 	df['Co2'].replace(0,np.nan, inplace = True)
@@ -70,6 +88,5 @@ def getTrueData():
 	df.dropna(subset=['Generic Model'], inplace=True)
 	df.dropna(subset=['BodyTypeDesc2'], inplace=True)
 	df.to_csv('../ProcessedData/ProcessedData.csv')
-	print(df)
 	print('Written to CSV')
 getTrueData()
