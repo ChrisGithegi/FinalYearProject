@@ -16,6 +16,7 @@ def allData():
 	writer = csv.writer(open('../ProcessedData/ProcessedData.csv','wt'))
 	x = 0
 	for d in dirs:
+		#try navigating to each folder to open each csv file to dump the data in a new csv file called ProcessedData.csv
 		try:
 			e = "{}/{}".format(os.getcwd(),d)
 			os.chdir(e)
@@ -40,6 +41,7 @@ def allData():
 							continue
 					except csv.Error as e:
 						print(e)
+			#print error if it cannot navigate to desired folder
 			except Exception as e:
 				print(e)
 			os.chdir("../")
@@ -48,6 +50,7 @@ def allData():
 			pass
 allData()
 '''
+now have a total of 814262 records before we cut this down
 now get data with the fields needed.
 fields needed are: 'UniqueId','Date','Time','site','TYPE','Generic Model','Propulsion Type Desc','BodyTypeDesc2','Mass','Co2'
 this will be stored in the same file.
@@ -69,16 +72,40 @@ def getTrueData():
 				pass
 		except Exception as e:
 			pass
+	#replace unknown/missing/incorrect vehicle mass' so that we have only accurate vehicle weights.
 	for d in df['Mass']:
 		try:
 			f = int(d)
-			if f < 800 and f > 4000:
+			if f < 800 or f > 4000:
 				df['Mass'].replace(d,np.nan, inplace = True)
 			else:
 				pass
 		except Exception as e:
-				print(d)
-
+			if isinstance(d,int):
+				pass
+			else:
+				if d is np.nan:
+					pass
+				else:
+					df['Mass'].replace(d,np.nan, inplace = True)
+	#replace unknown/missing/incorrect vehicle Co2 emission values so that we have only accurate figures for Co2 emissions
+	for d in df['Co2']:
+		try:
+			f = int(d)
+			if f > 500:
+				df['Co2'].replace(d,np.nan, inplace = True)
+			else:
+				pass
+		except Exception as e:
+			if isinstance(d,int):
+				pass
+			else:
+				if d is np.nan:
+					pass
+				else:
+					df['Co2'].replace(d,np.nan, inplace = True)
+    #drop any fields with null values that are found throughout the csv file.
+	df.dropna()
 	df['BodyTypeDesc2'].replace('',np.nan, inplace = True)
 	df['Co2'].replace('',np.nan, inplace = True)
 	df['Co2'].replace(0,np.nan, inplace = True)
@@ -88,5 +115,7 @@ def getTrueData():
 	df.dropna(subset=['Generic Model'], inplace=True)
 	df.dropna(subset=['BodyTypeDesc2'], inplace=True)
 	df.to_csv('../ProcessedData/ProcessedData.csv')
+	print(df)
 	print('Written to CSV')
+	#resulting in 685936 values ready to use
 getTrueData()
