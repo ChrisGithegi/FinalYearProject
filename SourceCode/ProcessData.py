@@ -72,12 +72,12 @@ def getTrueData():
 	for d in df['Mass']:
 		try:
 			f = int(d)
-			if f < 800:
+			if f < 800 and f > 4000:
 				df['Mass'].replace(d,np.nan, inplace = True)
 			else:
 				pass
 		except Exception as e:
-				pass
+				print(d)
 
 	df['BodyTypeDesc2'].replace('',np.nan, inplace = True)
 	df['Co2'].replace('',np.nan, inplace = True)
