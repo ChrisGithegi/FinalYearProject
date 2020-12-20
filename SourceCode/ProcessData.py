@@ -12,11 +12,13 @@ all csv content will be processed and stored in /ProcessedData/ProcessedData.csv
 def allData():
 	os.chdir("../RawData")
 	dirs = os.listdir()
-	#recursively go through raw data and combine into one .csv file
+	# recursively go through raw data and combine into one .csv file
+
 	writer = csv.writer(open('../ProcessedData/ProcessedData.csv','wt'))
 	x = 0
 	for d in dirs:
-		#try navigating to each folder to open each csv file to dump the data in a new csv file called ProcessedData.csv
+		# try navigating to each folder to open each csv file to dump the data in a new csv file called ProcessedData.csv
+
 		try:
 			e = "{}/{}".format(os.getcwd(),d)
 			os.chdir(e)
@@ -24,11 +26,11 @@ def allData():
 			try:
 				c = os.listdir()
 				c2 = []
-				#open csv file to put info into the processed csv file
+				# open csv file to put info into the processed csv file
 				with open(c[0],'rt',encoding='ISO-8859-1') as csvfile:
 					anprData = csv.reader(csvfile)
 					try:
-						#only copy heading from first file.
+						# only copy heading from first file.
 						if x == 0:
 							for row in anprData:
 								writer.writerow(row)
@@ -41,7 +43,7 @@ def allData():
 							continue
 					except csv.Error as e:
 						print(e)
-			#print error if it cannot navigate to desired folder
+			# print error if it cannot navigate to desired folder
 			except Exception as e:
 				print(e)
 			os.chdir("../")
