@@ -58,7 +58,7 @@ fields needed are: 'UniqueId','Date','Time','site','TYPE','Generic Model','Propu
 this will be stored in the same file.
 '''
 def getTrueData():
-	fields = ['UniqueId','Date','Time','site','TYPE','Generic Model','Propulsion Type Desc','BodyTypeDesc2','Mass','Co2']
+	fields = ['UniqueId','Date','Time','site','TYPE','Make Desc','Generic Model','Propulsion Type Desc','BodyTypeDesc2','Mass','Co2']
 	df = pd.read_csv('../ProcessedData/ProcessedData.csv',skipinitialspace=True,usecols=fields)
 	#replace empty value's with NaN (exception of TYPE field as if not populated, is a private vehicle)
 	df['Mass'].replace('',np.nan, inplace = True)
@@ -70,6 +70,16 @@ def getTrueData():
 		try:
 			if 'Model Missing' in f or 'Unknown' in f or f == '':
 				df['Generic Model'].replace(d,np.nan, inplace = True)
+			else:
+				pass
+		except Exception as e:
+			pass
+    # replace unknown/missing Manufacturers
+	for d in df['Make Desc']:
+		f = str(d)
+		try:
+			if 'Model Missing' in f or 'Unknown' in f or f == '':
+				df['Make Desc'].replace(d,np.nan, inplace = True)
 			else:
 				pass
 		except Exception as e:
@@ -116,6 +126,7 @@ def getTrueData():
 	df.dropna(subset=['Co2'], inplace=True)
 	df.dropna(subset=['Generic Model'], inplace=True)
 	df.dropna(subset=['BodyTypeDesc2'], inplace=True)
+	df.dropna(subset=['Make Desc'], inplace=True)
 	df.to_csv('../ProcessedData/ProcessedData.csv')
 	print(df)
 	print('Written to CSV')
