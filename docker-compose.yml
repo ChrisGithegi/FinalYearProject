@@ -22,7 +22,8 @@ services:
       MYSQL_DATABASE: ANPR
       MYSQL_USER: chris
       MYSQL_PASSWORD: chrispass
+      MYSQL_LOCAL_INFILE: 1
     volumes:
-      - ./ProcessedData/:/data/ 
+      - ./ProcessedData/:/data/
     ports:
       - "6033:3306"
