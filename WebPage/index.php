@@ -16,6 +16,7 @@
 		<input type="checkbox" value="Type", name="options[]"> Type of Vehicle<br/>
 	  <input type="checkbox" value="Make", name="options[]"> Make of Vehicle<br/>
 		<input type="checkbox" value="Body_Type", name="options[]"> Body Type<br/>
+		<input type="checkbox" value="Body_Type_Detail", name="options[]"> Body Type Detailed<br/>
 		<p><input type="submit" value="Submit"></p>
 	</form>
 </body>

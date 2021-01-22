@@ -54,11 +54,11 @@ allData()
 '''
 now have a total of 814262 records before we cut this down
 now get data with the fields needed.
-fields needed are: 'UniqueId','Date','Time','site','TYPE','Generic Model','Propulsion Type Desc','BodyTypeDesc2','Mass','Co2'
+fields needed are: 'UniqueId','Date','Time','site','TYPE','Generic Model','Propulsion Type Desc','Body Type Desc 1','BodyTypeDesc2','FirstRegMonth','Mass','Co2'
 this will be stored in the same file.
 '''
 def getTrueData():
-	fields = ['UniqueId','Date','Time','site','TYPE','Make Desc','Generic Model','Propulsion Type Desc','BodyTypeDesc2','Mass','Co2']
+	fields = ['UniqueId','Date','Time','site','TYPE','Make Desc','Generic Model','Propulsion Type Desc','FirstRegMonth','Body Type Desc 1','BodyTypeDesc2','Mass','Co2']
 	df = pd.read_csv('../ProcessedData/ProcessedData.csv',skipinitialspace=True,usecols=fields)
 	#replace empty value's with NaN (exception of TYPE field as if not populated, is a private vehicle)
 	df['Mass'].replace('',np.nan, inplace = True)
@@ -119,12 +119,18 @@ def getTrueData():
     #drop any fields with null values that are found throughout the csv file.
 	df.dropna()
 	df['BodyTypeDesc2'].replace('',np.nan, inplace = True)
+	df['Body Type Desc 1'].replace('',np.nan, inplace = True)
+	df['FirstRegMonth'].replace('',np.nan, inplace = True)
+
 	df['Co2'].replace('',np.nan, inplace = True)
 	df['Co2'].replace(0,np.nan, inplace = True)
 	#drop empty fields which have been filled with NAN
 	df.dropna(subset=['Mass'], inplace=True)
 	df.dropna(subset=['Co2'], inplace=True)
 	df.dropna(subset=['Generic Model'], inplace=True)
+	df.dropna(subset=['FirstRegMonth'], inplace=True)
+
+	df.dropna(subset=['Body Type Desc 1'], inplace=True)
 	df.dropna(subset=['BodyTypeDesc2'], inplace=True)
 	df.dropna(subset=['Make Desc'], inplace=True)
 	df.to_csv('../ProcessedData/ProcessedData.csv')

@@ -21,21 +21,21 @@
 				$resultCheck = mysqli_num_rows($result);
 
 				if (($resultCheck > 0 && $x == 0)) {
-					if (($value == "Date") || ($value == "Site") || ($value == "Make") || ($value == "Type") || ($value == "Body_Type")){
+					if (($value == "Date") || ($value == "Site") || ($value == "Make") || ($value == "Type") || ($value == "Body_Type") || ($value == "Body_Type_Detail")){
 						$new_sql .= "($value in (";
 						$place = $value;
 						array_push($stack_col, "$value");
 					}
 				}
 				elseif (($resultCheck > 0 && $x > 0)) {
-					if (($value == "Date") || ($value == "Site") || ($value == "Make") || ($value == "Type") || ($value == "Body_Type")){
+					if (($value == "Date") || ($value == "Site") || ($value == "Make") || ($value == "Type") || ($value == "Body_Type") || ($value == "Body_Type_Detail")){
 						$new_sql = rtrim($new_sql, ", ");
 						$new_sql .= ")) and ($value in (";
 						$place = $value;
 						array_push($stack_col, "$value");
 					}
 				}
-				elseif (($place == "Date") || ($place == "Site") || ($place == "Make") || ($place == "Type") || ($place == "Body_Type")) {
+				elseif (($place == "Date") || ($place == "Site") || ($place == "Make") || ($place == "Type") || ($place == "Body_Type")|| ($value == "Body_Type_Detail")) {
 					$new_sql .= "'$value',";
 				}
 				else {
@@ -129,9 +129,9 @@
 
 			echo "$script_normal";
 			echo "<div id='barchart_material' style='width: 1500px; height: 700px;'></div>";
-			echo "<div> <button style='margin: 1em 1em 1em 2em'>
+			echo "<div> <form action='Stats.php' method='post'> <button style='margin: 1em 1em 1em 2em'>
 								Simulate Ultra Low Emission Zone (ULEZ)
-							</button>";
+							</button></form>";
 			echo "</div>";
 			echo "<br/><br/>";
 
@@ -214,6 +214,9 @@
 			echo "You must select an option.";
 		}
 	?>
-
+	<p>Click Below to go back</p>
+	<form action="index.php" method="post">
+		<p><input type="submit" value="Go Back"></p>
+	</form>
 </body>
 </html>
