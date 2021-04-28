@@ -88,7 +88,7 @@ def getTrueData():
 	for d in df['Mass']:
 		try:
 			f = int(d)
-			if f < 800 or f > 4000:
+			if f < 549 or f > 4000:
 				df['Mass'].replace(d,np.nan, inplace = True)
 			else:
 				pass
@@ -134,7 +134,92 @@ def getTrueData():
 	df.dropna(subset=['BodyTypeDesc2'], inplace=True)
 	df.dropna(subset=['Make Desc'], inplace=True)
 	df.to_csv('../ProcessedData/ProcessedData.csv')
-	print(df)
 	print('Written to CSV')
 	#resulting in 685936 values ready to use
 getTrueData()
+
+def addEuroStd():
+	fields = ['UniqueId','Date','Time','site','TYPE','Make Desc','Generic Model','Propulsion Type Desc','FirstRegMonth','Body Type Desc 1','BodyTypeDesc2','Mass','Co2']
+	df = pd.read_csv('../ProcessedData/ProcessedData.csv',skipinitialspace=True,usecols=fields)
+	conditions = [
+	# cars
+	(df['FirstRegMonth'] < '1992-12-31')  & (df['Body Type Desc 1'] == 'CARS'),
+	(df['FirstRegMonth'] > '1992-12-30') & (df['FirstRegMonth'] < '1997-01-01') & (df['Body Type Desc 1'] == 'CARS'),
+	(df['FirstRegMonth'] > '1996-12-31') & (df['FirstRegMonth'] < '2001-01-01') & (df['Body Type Desc 1'] == 'CARS'),
+	(df['FirstRegMonth'] > '2000-12-31') & (df['FirstRegMonth'] < '2006-01-01') & (df['Body Type Desc 1'] == 'CARS'),
+	(df['FirstRegMonth'] > '2005-12-31') & (df['FirstRegMonth'] < '2011-01-01') & (df['Body Type Desc 1'] == 'CARS'),
+	(df['FirstRegMonth'] > '2010-12-31') & (df['FirstRegMonth'] < '2015-09-01') & (df['Body Type Desc 1'] == 'CARS'),
+	(df['FirstRegMonth'] > '2015-08-31') & (df['Body Type Desc 1'] == 'CARS'),
+	# coaches and buses
+	(df['FirstRegMonth'] < '1992-12-31')  & (df['Body Type Desc 1'] == 'BUSES & COACHES'),
+	(df['FirstRegMonth'] > '1992-12-30') & (df['FirstRegMonth'] < '1997-01-01') & (df['Body Type Desc 1'] == 'BUSES & COACHES'),
+	(df['FirstRegMonth'] > '1996-12-31') & (df['FirstRegMonth'] < '2001-01-01') & (df['Body Type Desc 1'] == 'BUSES & COACHES'),
+	(df['FirstRegMonth'] > '2000-12-31') & (df['FirstRegMonth'] < '2006-01-01') & (df['Body Type Desc 1'] == 'BUSES & COACHES'),
+	(df['FirstRegMonth'] > '2005-12-31') & (df['FirstRegMonth'] < '2011-01-01') & (df['Body Type Desc 1'] == 'BUSES & COACHES'),
+	(df['FirstRegMonth'] > '2010-12-31') & (df['FirstRegMonth'] < '2015-09-01') & (df['Body Type Desc 1'] == 'BUSES & COACHES'),
+	(df['FirstRegMonth'] > '2015-08-31') & (df['Body Type Desc 1'] == 'BUSES & COACHES'),
+	# taxis
+	(df['FirstRegMonth'] < '1992-12-31')  & (df['Body Type Desc 1'] == 'TAXIS'),
+	(df['FirstRegMonth'] > '1992-12-30') & (df['FirstRegMonth'] < '1997-01-01') & (df['Body Type Desc 1'] == 'TAXIS'),
+	(df['FirstRegMonth'] > '1996-12-31') & (df['FirstRegMonth'] < '2001-01-01') & (df['Body Type Desc 1'] == 'TAXIS'),
+	(df['FirstRegMonth'] > '2000-12-31') & (df['FirstRegMonth'] < '2006-01-01') & (df['Body Type Desc 1'] == 'TAXIS'),
+	(df['FirstRegMonth'] > '2005-12-31') & (df['FirstRegMonth'] < '2011-01-01') & (df['Body Type Desc 1'] == 'TAXIS'),
+	(df['FirstRegMonth'] > '2010-12-31') & (df['FirstRegMonth'] < '2015-09-01') & (df['Body Type Desc 1'] == 'TAXIS'),
+	(df['FirstRegMonth'] > '2015-08-31') & (df['Body Type Desc 1'] == 'TAXIS'),
+	#Light GOODS <1306kg
+	(df['FirstRegMonth'] < '1994-10-01')  & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] < 1306),
+	(df['FirstRegMonth'] > '1994-09-30') & (df['FirstRegMonth'] < '1997-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] < 1306),
+	(df['FirstRegMonth'] > '1997-09-30') & (df['FirstRegMonth'] < '2001-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] < 1306),
+	(df['FirstRegMonth'] > '2000-12-31') & (df['FirstRegMonth'] < '2006-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] < 1306),
+	(df['FirstRegMonth'] > '2005-12-31') & (df['FirstRegMonth'] < '2011-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] < 1306),
+	(df['FirstRegMonth'] > '2010-12-31') & (df['FirstRegMonth'] < '2015-09-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] < 1306),
+	(df['FirstRegMonth'] > '2015-08-31') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] < 1306),
+	#Light GOODS 1306 - 1760kg
+	(df['FirstRegMonth'] < '1994-10-01')  & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1305) & (df['Mass'] < 1761),
+	(df['FirstRegMonth'] > '1994-09-30') & (df['FirstRegMonth'] < '1998-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1305) & (df['Mass'] < 1761),
+	(df['FirstRegMonth'] > '1998-09-30') & (df['FirstRegMonth'] < '2002-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1305) & (df['Mass'] < 1761),
+	(df['FirstRegMonth'] > '2001-12-31') & (df['FirstRegMonth'] < '2007-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1305) & (df['Mass'] < 1761),
+	(df['FirstRegMonth'] > '2006-12-31') & (df['FirstRegMonth'] < '2012-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1305) & (df['Mass'] < 1761),
+	(df['FirstRegMonth'] > '2011-12-31') & (df['FirstRegMonth'] < '2016-09-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1305) & (df['Mass'] < 1761),
+	(df['FirstRegMonth'] > '2016-08-31') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1305) & (df['Mass'] < 1761),
+	#Light GOODS >1760kg - 3500kg
+	(df['FirstRegMonth'] < '1994-10-01')  & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1760) & (df['Mass'] < 3501),
+	(df['FirstRegMonth'] > '1994-09-30') & (df['FirstRegMonth'] < '1999-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1760) & (df['Mass'] < 3501),
+	(df['FirstRegMonth'] > '1999-09-30') & (df['FirstRegMonth'] < '2002-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1760) & (df['Mass'] < 3501),
+	(df['FirstRegMonth'] > '2001-12-31') & (df['FirstRegMonth'] < '2007-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1760) & (df['Mass'] < 3501),
+	(df['FirstRegMonth'] > '2006-12-31') & (df['FirstRegMonth'] < '2012-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1760) & (df['Mass'] < 3501),
+	(df['FirstRegMonth'] > '2011-12-31') & (df['FirstRegMonth'] < '2016-09-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1760) & (df['Mass'] < 3501),
+	(df['FirstRegMonth'] > '2016-08-31') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 1760) & (df['Mass'] < 3501),
+	#HGV >3500kg - 12000kg
+	(df['FirstRegMonth'] < '1992-01-01')  & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 3500) & (df['Mass'] < 12001),
+	(df['FirstRegMonth'] > '1991-12-31') & (df['FirstRegMonth'] < '1996-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 3500) & (df['Mass'] < 12001),
+	(df['FirstRegMonth'] > '1996-09-30') & (df['FirstRegMonth'] < '2000-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 3500) & (df['Mass'] < 12001),
+	(df['FirstRegMonth'] > '1999-12-31') & (df['FirstRegMonth'] < '2005-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 3500) & (df['Mass'] < 12001),
+	(df['FirstRegMonth'] > '2005-09-30') & (df['FirstRegMonth'] < '2008-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 3500) & (df['Mass'] < 12001),
+	(df['FirstRegMonth'] > '2008-09-30') & (df['FirstRegMonth'] < '2013-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 3500) & (df['Mass'] < 12001),
+	(df['FirstRegMonth'] > '2012-12-31') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 3500) & (df['Mass'] < 12001),
+	#HGV >12000 kg
+	(df['FirstRegMonth'] < '1993-10-01')  & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 12000),
+	(df['FirstRegMonth'] > '1993-09-30') & (df['FirstRegMonth'] < '1996-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 12000),
+	(df['FirstRegMonth'] > '1996-09-30') & (df['FirstRegMonth'] < '2000-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 12000),
+	(df['FirstRegMonth'] > '2000-09-30') & (df['FirstRegMonth'] < '2006-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 12000),
+	(df['FirstRegMonth'] > '2006-09-30') & (df['FirstRegMonth'] < '2009-10-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 12000),
+	(df['FirstRegMonth'] > '2009-09-30') & (df['FirstRegMonth'] < '2014-01-01') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 12000),
+	(df['FirstRegMonth'] > '2013-12-31') & (df['Body Type Desc 1'] == 'GOODS') & (df['Mass'] > 12000),
+	#OTHERS
+	(df['FirstRegMonth'] < '1992-12-31')  & (df['Body Type Desc 1'] == 'OTHERS'),
+	(df['FirstRegMonth'] > '1992-12-30') & (df['FirstRegMonth'] < '1997-01-01') & (df['Body Type Desc 1'] == 'OTHERS'),
+	(df['FirstRegMonth'] > '1996-12-31') & (df['FirstRegMonth'] < '2001-01-01') & (df['Body Type Desc 1'] == 'OTHERS'),
+	(df['FirstRegMonth'] > '2000-12-31') & (df['FirstRegMonth'] < '2006-01-01') & (df['Body Type Desc 1'] == 'OTHERS'),
+	(df['FirstRegMonth'] > '2005-12-31') & (df['FirstRegMonth'] < '2011-01-01') & (df['Body Type Desc 1'] == 'OTHERS'),
+	(df['FirstRegMonth'] > '2010-12-31') & (df['FirstRegMonth'] < '2015-09-01') & (df['Body Type Desc 1'] == 'OTHERS'),
+	(df['FirstRegMonth'] > '2015-08-31') & (df['Body Type Desc 1'] == 'OTHERS')
+	]
+	values = ['-', 'Euro 1', 'Euro 2', 'Euro 3', 'Euro 4', 'Euro 5', 'Euro 6']
+	values = values*9
+	df['Tier'] = np.select(conditions,values)
+
+	df.to_csv('../ProcessedData/ProcessedData.csv')
+	print('Written to CSV')
+
+addEuroStd()
