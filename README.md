@@ -11,9 +11,11 @@ Through the input of Leeds ANPR data, the goal is to visualise this information 
 1. Make sure you have docker desktop installed on your machine: https://www.docker.com/products/docker-desktop
 2. Make sure you are running this on a Unix System. 
 
-If you are running on windows, once the script has finished operating, go to your browser and navigate to: http://localhost:8000/HomePage.php
+If you are running on windows, execute the script in the same way then go to your browser and navigate to: http://localhost:8000/HomePage.php
 
 #HOW TO RUN
 
 1. To run, go on your command line & navigate to cloned folder named "FinalYearProject"
-2. Execute the command "sh RunSite.sh"
+2. Execute the command "sh RunSite.sh".
+
+This takes approximately 2 minutes to set up the environment and launch the website. Please give this some time to load
