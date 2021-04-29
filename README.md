@@ -8,5 +8,5 @@ Through the input of Leeds ANPR data, the goal is to visualise this information 
 
 #HOW TO RUN
 
-1. To run, go on your command line & navigate to folder named "Final Year Project"
+1. To run, go on your command line & navigate to cloned folder named "FinalYearProject"
 2. Execute the command "./RunSite.sh"
